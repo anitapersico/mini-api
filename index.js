@@ -5,6 +5,7 @@ const Task = require("./models/Task");
 const bcrypt = require("bcryptjs");
 const User = require("./models/User");
 const jwt = require("jsonwebtoken");
+const auth = require("./middleware/auth");
 
 const app = express();
 app.use(express.json()); 
@@ -29,7 +30,7 @@ app.get("/tasks", async (req, res) => {
   }
 });
 
-app.post("/tasks", async (req, res) => {
+app.post("/tasks", auth, async (req, res) => {
   try {
     const nuovoTask = await Task.create(req.body);
     res.status(201).json(nuovoTask);
@@ -38,7 +39,7 @@ app.post("/tasks", async (req, res) => {
   }
 });
 
-app.put("/tasks/:id", async (req, res) => {
+app.put("/tasks/:id", auth, async (req, res) => {
   try {
     const taskAggiornato = await Task.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -53,7 +54,7 @@ app.put("/tasks/:id", async (req, res) => {
   }
 });
 
-app.delete("/tasks/:id", async (req, res) => {
+app.delete("/tasks/:id", auth, async (req, res) => {
   try {
     const taskEliminato = await Task.findByIdAndDelete(req.params.id);
     if (!taskEliminato) {
